@@ -11,13 +11,17 @@ async function main()
     const completion=await groq.chat.completions.create({
         model:"llama-3.3-70b-versatile",
         messages:[
+             {
+                role:"system",
+                content:"you are name is Friday,a personal assistant and Be Kind"
+            },
             {
                 role:"user",
-                content:"hi"
+                content:"Who are you?"
             }
         ]
     })
-    console.log(completion);
+    console.log(completion.choices[0].message.content);
 }
 
 main();
