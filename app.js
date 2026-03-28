@@ -16,11 +16,13 @@ async function main()
         // max_completion_tokens:1000,
         // frequency_penalty:0.1,
         // presence_penalty:0.1,
+        //json mode
+        response_format:{"type":"json_object"},
         messages:[
              {
                 role:"system",
                 content:`you are Friday,a smart review grader.Your task is to analyse given review and return the
-                sentiment.Classify the review as positive,neutral or negative.Output must be a single word`
+                sentiment.Classify the review as positive,neutral or negative.outpust should only be a single word,Respond with json format`
             },
             {
                 role:"user",
