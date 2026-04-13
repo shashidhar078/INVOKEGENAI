@@ -10,6 +10,7 @@ async function main()
 {
     const completion=await groq.chat.completions.create({
         model:"llama-3.3-70b-versatile",
+<<<<<<< HEAD
         temperature:0,
         messages:[
              {
@@ -18,11 +19,18 @@ async function main()
                 you have access to the following tools :
                     "description": "Search for the latest information and realtime data on the internet",
                 1.webSearch({query}:{query:String})  //`
+=======
+        messages:[
+             {
+                role:"system",
+                content:`you are a smart personal assistant,who answer the asked questions`
+>>>>>>> 53eb4ba (understood the concept of tool-calling and seen about knowledge-cutoff in different models)
              },
             {
                 role:"user",
                 content:`When apple 16 was launched?`
             }
+<<<<<<< HEAD
         ],
         // Sample request body with tool definitions and messages
             tools: [
@@ -56,3 +64,11 @@ async function webSearch({query})
 {
     return "Iphone 16 was launched in the year of 2024."
 }
+=======
+        ]
+    })
+    console.log(completion.choices[0].message.content);
+}
+
+main();
+>>>>>>> 53eb4ba (understood the concept of tool-calling and seen about knowledge-cutoff in different models)
