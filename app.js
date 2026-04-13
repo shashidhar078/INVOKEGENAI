@@ -35,10 +35,6 @@ async function main()
     console.log(completion.choices[0].message.content);
 }
 
-<<<<<<< HEAD
-=======
-main();
->>>>>>> 53eb4ba (understood the concept of tool-calling and seen about knowledge-cutoff in different models)
 
 // import Groq from "groq-sdk";
 // import 'dotenv/config'; 

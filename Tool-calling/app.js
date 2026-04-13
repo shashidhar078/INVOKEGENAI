@@ -10,7 +10,6 @@ async function main()
 {
     const completion=await groq.chat.completions.create({
         model:"llama-3.3-70b-versatile",
-<<<<<<< HEAD
         temperature:0,
         messages:[
              {
@@ -19,18 +18,11 @@ async function main()
                 you have access to the following tools :
                     "description": "Search for the latest information and realtime data on the internet",
                 1.webSearch({query}:{query:String})  //`
-=======
-        messages:[
-             {
-                role:"system",
-                content:`you are a smart personal assistant,who answer the asked questions`
->>>>>>> 53eb4ba (understood the concept of tool-calling and seen about knowledge-cutoff in different models)
              },
             {
                 role:"user",
                 content:`When apple 16 was launched?`
             }
-<<<<<<< HEAD
         ],
         // Sample request body with tool definitions and messages
             tools: [
@@ -52,23 +44,42 @@ async function main()
                     }
                 }
             }
-        ]
+        ],
+          tool_choice:'auto' 
     })
-    tool_choice:'auto'    
-    console.log(JSON.stringify(completion.choices[0].message));
+     
+    // console.log(JSON.stringify(completion.choices[0].message));
+
+    const toolcalls=completion.choices[0].message.tool_calls
+
+if(!toolcalls)
+{
+    console.log(`AI completions : ${completion.choices[0].message.content}`)
+    return; 
 }
+
+    
+
+for(const tool of toolcalls)
+{
+    console.log("tool : ",tool);
+    const functionName=tool.function.name;
+    const functionParam=tool.function.arguments;
+
+    if(functionName=='webSearch')
+    {
+       const result=await webSearch(JSON.parse(functionParam));
+        console.log("tool result : ",result)
+    }
+}
+
+}
+
 
 main();
 
 async function webSearch({query})
 {
+    console.log("Tool calling>>>>>")
     return "Iphone 16 was launched in the year of 2024."
 }
-=======
-        ]
-    })
-    console.log(completion.choices[0].message.content);
-}
-
-main();
->>>>>>> 53eb4ba (understood the concept of tool-calling and seen about knowledge-cutoff in different models)
