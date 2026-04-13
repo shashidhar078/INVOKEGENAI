@@ -47,7 +47,7 @@ async function main()
         ]
     })
     tool_choice:'auto'    
-    console.log(completion.choices[0].message);
+    console.log(JSON.stringify(completion.choices[0].message));
 }
 
 main();
