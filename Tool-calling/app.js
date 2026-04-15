@@ -1,7 +1,9 @@
 console.log("Welcome to GENAI")
 import 'dotenv/config'; 
 import Groq from "groq-sdk";
+import {tavily} from "@tavily/core"
 
+const tavilysearch = tavily({ apiKey: process.env.TAVILY_API_KEY });
 
 //creating object , since we are taking groq , let the name be groq itself
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY }); 
@@ -81,5 +83,10 @@ main();
 async function webSearch({query})
 {
     console.log("Tool calling>>>>>")
-    return "Iphone 16 was launched in the year of 2024."
+
+    const response=await tavilysearch.search(query);
+    const finalResult=response.results.map((result)=>result.content).join("\n\n")
+    console.log(finalResult);
+
+    return finalResult;
 }
