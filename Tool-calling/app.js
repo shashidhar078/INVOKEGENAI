@@ -10,10 +10,8 @@ const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 async function main()
 {
-    const completion=await groq.chat.completions.create({
-        model:"llama-3.3-70b-versatile",
-        temperature:0,
-        messages:[
+
+    let messages=[
              {
                 role:"system",
                 content:`you are a smart personal assistant,who answer the asked questions
@@ -25,7 +23,70 @@ async function main()
                 role:"user",
                 content:`When apple 16 was launched?`
             }
+        ]
+
+    const completion=await groq.chat.completions.create({
+        model:"llama-3.3-70b-versatile",
+        temperature:0,
+        // Sample request body with tool definitions and messages
+            messages:messages,
+            tools: [
+            {
+                "type": "function",
+                "function": {
+                    "name": "webSearch",
+                    "description": "Search for the latest information and realtime data on the internet",
+                    "parameters": {
+                    // JSON Schema object
+                    "type": "object",
+                    "properties": {
+                        "query": {
+                        "type": "string",
+                        "description": "search query to perform search on "
+                        },
+                    },
+                    "required": ["query"]
+                    }
+                }
+            }
         ],
+          tool_choice:'auto' 
+    })
+     
+    messages.push(completion.choices[0].message)// to maintain the history that called tool
+    // console.log(JSON.stringify(completion.choices[0].message));
+
+    const toolcalls=completion.choices[0].message.tool_calls
+
+if(!toolcalls)
+{
+    console.log(`AI completions : ${completion.choices[0].message.content}`)
+    return; 
+}
+
+    
+
+for(const tool of toolcalls)
+{
+    console.log("tool : ",tool);
+    const functionName=tool.function.name;
+    const functionParam=tool.function.arguments;
+
+    if(functionName=='webSearch')
+    {
+       const result=await webSearch(JSON.parse(functionParam));
+        console.log("tool result : ",result)
+        messages.push({
+        role: "tool",
+        tool_call_id: tool.id,
+        content: result
+        })
+    }
+}
+ const completion2=await groq.chat.completions.create({
+        model:"llama-3.3-70b-versatile",
+        temperature:0,
+        messages:messages,
         // Sample request body with tool definitions and messages
             tools: [
             {
@@ -50,30 +111,8 @@ async function main()
           tool_choice:'auto' 
     })
      
-    // console.log(JSON.stringify(completion.choices[0].message));
-
-    const toolcalls=completion.choices[0].message.tool_calls
-
-if(!toolcalls)
-{
-    console.log(`AI completions : ${completion.choices[0].message.content}`)
-    return; 
-}
-
     
-
-for(const tool of toolcalls)
-{
-    console.log("tool : ",tool);
-    const functionName=tool.function.name;
-    const functionParam=tool.function.arguments;
-
-    if(functionName=='webSearch')
-    {
-       const result=await webSearch(JSON.parse(functionParam));
-        console.log("tool result : ",result)
-    }
-}
+    console.log(JSON.stringify(completion2.choices[0].message));
 
 }
 
